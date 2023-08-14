@@ -16,6 +16,7 @@ describe('Get api/topics', ()=> {
         .expect(200)
         .then((response)=> {
             const {topics} = response.body
+            expect(topics).toHaveLength(3)
             topics.forEach((topic)=> {
                 expect(topic).toHaveProperty('slug', expect.any(String))
                 expect(topic).toHaveProperty('description', expect.any(String))
