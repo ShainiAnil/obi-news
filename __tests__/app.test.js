@@ -90,3 +90,38 @@ describe("/api/articles/:article_id", () => {
         })
     })
 })
+describe("GET /api/articles", () => {
+    test("should respond with an array of all article objects", () => {
+      return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then(({ body: { articles } }) => {
+            expect(articles).toHaveLength(13)
+            articles.forEach((article) => {
+                 expect(Object.keys(article)).toIncludeSameMembers([
+                    "author",
+                    "title",
+                    "article_id",
+                    "topic",
+                    "created_at",
+                    "votes",
+                    "article_img_url",
+                    "comment_count",
+                ])
+            })
+        })
+    })
+    test("should sort the articles by date in descending order", () => {
+        return request(app)
+          .get("/api/articles")
+          .expect(200)
+          .then(({ body: { articles } }) => {
+            expect(articles).toBeSortedBy("created_at", { descending: true })
+        })
+    })
+    test('Status code 404 for bad route',()=>{
+        return request(app)
+        .get('/api/article')
+        .expect(404)
+    })
+})
