@@ -55,5 +55,38 @@ describe('/api',()=>{
            
         })
     })
-
+})
+describe("/api/articles/:article_id", () => {
+    test("should respond with 200 and an article object", () => {
+      return request(app)
+        .get("/api/articles/1")
+        .expect(200)
+        .then(({ body }) => {
+             const article = body.article;
+             expect(article).toEqual({
+                article_id: 1,
+                title: "Living in the shadow of a great man", 
+                author: "butter_bridge", 
+                body:"I find this existence challenging", 
+                topic: "mitch", 
+                created_at: "2020-07-09T20:11:00.000Z", 
+                votes: 100, 
+                article_img_url: "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
+            });
+        });
+    })
+    test("Status 404 : responds with a 404 error and an error message when a valid id which does not exist is given",()=>{
+        return request(app).get("/api/articles/999")
+        .expect(404)
+        .then(response =>{
+            expect(response.body.msg).toBe("No article found for article_id:999")
+        })
+    })
+    test("Status 400 : responds with a 400 error and an error message when given an invalid id",()=>{
+        return request(app).get("/api/articles/notAnId")
+        .expect(400)
+        .then(response =>{
+            expect(response.body.msg).toBe("Bad request")
+        })
+    })
 })
