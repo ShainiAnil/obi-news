@@ -303,3 +303,29 @@ describe("PATCH /api/articles/:article_id", () => {
         })
     })
 })
+describe("DELETE /api/comments/:commend_it", () => {
+    test("Status 204: delete the given comment by comment_id", () => {
+      return request(app)
+        .delete("/api/comments/5")
+        .expect(204)
+        .then(({ body }) => {
+          expect(body).toEqual({})
+        })
+    })
+    test("Status 404: returns 'Not Found' when given an id with no associated comment", () => {
+        return request(app)
+          .delete("/api/comments/9999")
+          .expect(404)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("Not Found")
+          })
+    })
+    test("Status 400: returns 'Bad request' when given an invalid id", () => {
+        return request(app)
+          .delete("/api/comments/notAnId")
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("Bad request")
+        })
+    })
+})
