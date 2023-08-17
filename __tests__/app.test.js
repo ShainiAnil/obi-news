@@ -170,5 +170,60 @@ describe("GET /api/articles", () => {
             expect(msg).toBe("Not Found")
         })
       })
-    
+})
+describe("POST /api/articles/:article_id/comments", () => {
+    test("Status 201: posts a new comment to the specified article", () => {
+      const newComment = {
+        username: "butter_bridge",
+        body: "I honestly enjoyed reading this article",
+      };
+      return request(app)
+        .post("/api/articles/1/comments")
+        .send(newComment)
+        .expect(201)
+        .then(({ body: { comment } }) => {
+            expect(comment).toHaveProperty("comment_id", 19)
+            expect(comment).toHaveProperty("body", "I honestly enjoyed reading this article")
+            expect(comment).toHaveProperty("article_id", 1)
+            expect(comment).toHaveProperty("author", "butter_bridge")
+            expect(comment).toHaveProperty("votes", 0)
+            expect(comment).toHaveProperty("created_at")
+        })
+    })
+    test("Status 404: responds with 404 Not Found when passed an article id which doesn't exist", () => {
+        const newComment = {
+            username: "butter_bridge",
+            body: "I honestly enjoyed reading this article",
+        }
+        return request(app)
+        .post("/api/articles/1111/comments")
+        .send(newComment)
+        .expect(404)
+        .then(({ body: { msg } }) => {
+         expect(msg).toBe("Not Found")
+        })
+    })
+    test("Status 400: responds with 'Bad request' when sent an invalid article_id", () => {
+        const newComment = {
+            username: "butter_bridge",
+            body: "I honestly enjoyed reading this article",
+        }
+        return request(app)
+          .post("/api/articles/something/comments")
+          .send(newComment)
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("Bad request")
+        })
+    })
+    test("Status 400: responds with 'Bad request' when sent an empty object", () => {
+        const newComment = {};
+        return request(app)
+          .post("/api/articles/1/comments")
+          .send(newComment)
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("Bad request")
+        })
+    })
 })
