@@ -1,5 +1,5 @@
 const db = require("../db/connection")
-
+const { checkArticleExists } = require("../utils/utils")
 const fetchArticleById = (id) =>{
     
     return db.query(`SELECT article_id, title, author, body, topic, created_at, votes, article_img_url FROM articles WHERE article_id=$1;`,[id])
@@ -41,4 +41,21 @@ const fetchArticles = () => {
       })
   };
 
- module.exports = {fetchArticleById, fetchArticles}
+  const updateArticleVotes = (articleId, incVotes) => {
+    
+    return checkArticleExists("articles", "article_id", articleId)
+      .then(() => { 
+        return db.query(
+          `UPDATE articles
+            SET votes = votes + $1
+            WHERE article_id = $2
+            RETURNING *`,
+            [incVotes, articleId]
+        )
+      })
+      .then(({ rows }) => { 
+        return rows[0]
+      })
+  }
+
+ module.exports = {fetchArticleById, fetchArticles, updateArticleVotes}
