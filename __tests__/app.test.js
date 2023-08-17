@@ -124,4 +124,42 @@ describe("GET /api/articles", () => {
         .get('/api/article')
         .expect(404)
     })
+    describe("GET /api/articles/:article_id/comments", () => {
+        test("status 200 : responds with an array of comments with the given article_id, sorted by date", () => {
+          return request(app)
+            .get("/api/articles/1/comments")
+            .expect(200)
+            .then(({ body: { comments } }) => {
+              const keys = [
+                "comment_id",
+                "votes",
+                "created_at",
+                "author",
+                "body",
+                "article_id",
+              ];
+              expect(comments).toHaveLength(11);
+              expect(comments).toBeSortedBy("created_at", { descending: true })
+              comments.forEach((comment) => {
+                expect(Object.keys(comment)).toEqual(expect.arrayContaining(keys))
+              })
+            })
+        })
+    })
+    test("status 200: responds with an empty array if given a valid article but it has no comments", () => {
+        return request(app)
+          .get("/api/articles/4/comments")
+          .expect(200)
+          .then(({ body: { comments } }) => {
+            expect(comments).toEqual([])
+        })
+    })
+    test("should respond with 400 Bad Request if given incorrect data type for id", () => {
+        return request(app)
+          .get("/api/articles/bananas/comments")
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("Bad request")
+        })
+    })
 })
