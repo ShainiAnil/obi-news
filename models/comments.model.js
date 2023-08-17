@@ -14,3 +14,23 @@ exports.fetchCommentsByArticle = (articleId) => {
     })
     .then(({ rows }) => rows);
 };
+
+exports.createComment = (reqBody, articleId) => {
+  const { username } = reqBody
+  const { body } = reqBody
+  
+  return db
+    .query(
+      `INSERT INTO comments(
+        article_id, author, body
+      )
+    VALUES
+    ($1, $2, $3)
+    RETURNING *;
+    `,
+      [articleId, username, body]
+    )
+    .then(({ rows }) => {
+      return rows[0]
+    })
+}
