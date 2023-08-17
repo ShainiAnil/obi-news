@@ -154,7 +154,7 @@ describe("GET /api/articles", () => {
             expect(comments).toEqual([])
         })
     })
-    test("should respond with 400 Bad Request if given incorrect data type for id", () => {
+    test("should respond with 400 Bad request if given incorrect data type for id", () => {
         return request(app)
           .get("/api/articles/bananas/comments")
           .expect(400)
@@ -162,4 +162,13 @@ describe("GET /api/articles", () => {
             expect(msg).toBe("Bad request")
         })
     })
+    test("status 404: responds with 'Not Found' if no article is found with given id", () => {
+        return request(app)
+          .get("/api/articles/500/comments")
+          .expect(404)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("Not Found")
+        })
+      })
+    
 })
