@@ -90,3 +90,47 @@ describe("/api/articles/:article_id", () => {
         })
     })
 })
+describe("GET /api/articles/:article_id/comments", () => {
+    test("Status 200 : responds with an array of comments with the given article_id, sorted by date", () => {
+      return request(app)
+        .get("/api/articles/1/comments")
+        .expect(200)
+        .then(({ body: { comments } }) => {
+            expect(comments).toHaveLength(11);
+            comments.forEach(comment=>{
+                expect(comment).toHaveProperty("comment_id")
+                expect(comment).toHaveProperty("votes")
+                expect(comment).toHaveProperty("created_at")
+                expect(comment).toHaveProperty("author")
+                expect(comment).toHaveProperty("body")
+                expect(comment).toHaveProperty("article_id")
+            })
+            expect(comments).toBeSortedBy("created_at", { descending: true })
+        })
+    })
+    test("Status 404 : responds with 404 if no article is found with given id", () => {
+        return request(app)
+          .get("/api/articles/999/comments")
+          .expect(404)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("Not Found")
+        })
+    })
+    test("Status 400 : responds with 400 Bad request, if the data type for id is invalid", () => {
+        return request(app)
+          .get("/api/articles/invalid/comments")
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("Bad request")
+        })
+    })
+    test("Status 200: responds with an empty array if given a valid article_id but it doesn't have any comments", () => {
+        return request(app)
+          .get("/api/articles/4/comments")
+          .expect(200)
+          .then(({ body: { comments } }) => {
+            expect(comments).toEqual([])
+        })
+    })
+    
+})
