@@ -311,9 +311,9 @@ describe("GET /api/users", () => {
         .then(({ body: { users } }) => {
             expect(users).toHaveLength(4)
             users.forEach((user) => {
-                expect(user).toHaveProperty("username")
-                expect(user).toHaveProperty("name");
-                expect(user).toHaveProperty("avatar_url")
+                expect(user).toHaveProperty("username", expect.any(String))
+                expect(user).toHaveProperty("name", expect.any(String));
+                expect(user).toHaveProperty("avatar_url", expect.any(String))
             })
         })
     })
