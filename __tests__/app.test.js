@@ -303,3 +303,23 @@ describe("PATCH /api/articles/:article_id", () => {
         })
     })
 })
+describe("GET /api/users", () => {
+    test("Status 200: responds with an array of user objects", () => {
+      return request(app)
+        .get("/api/users")
+        .expect(200)
+        .then(({ body: { users } }) => {
+            expect(users).toHaveLength(4)
+            users.forEach((user) => {
+                expect(user).toHaveProperty("username")
+                expect(user).toHaveProperty("name");
+                expect(user).toHaveProperty("avatar_url")
+            })
+        })
+    })
+    test('Status code 404 for bad route',()=>{
+        return request(app)
+        .get('/api/something')
+        .expect(404)
+    })
+})
