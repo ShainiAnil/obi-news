@@ -34,3 +34,8 @@ exports.createComment = (reqBody, articleId) => {
       return rows[0]
     })
 }
+exports.removeComment = (commentId) => {
+  return checkArticleExists("comments", "comment_id", commentId).then(() => {
+    db.query(`DELETE FROM comments WHERE comment_id = $1;`, [commentId])
+  })
+}
