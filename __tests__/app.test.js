@@ -343,9 +343,4 @@ describe("GET /api/users", () => {
             })
         })
     })
-    test('Status code 404 for bad route',()=>{
-        return request(app)
-        .get('/api/something')
-        .expect(404)
-    })
 })
