@@ -28,6 +28,7 @@ describe('Get api/topics', ()=> {
         .get('/api/topic')
         .expect(404)
     })
+   
 })
 describe('/api',()=>{
     test('Status 200: should return an object describing all the available endpoints on this API',()=>{
@@ -119,6 +120,19 @@ describe("GET /api/articles", () => {
             expect(articles).toBeSortedBy("created_at", { descending: true })
         })
     })
+    test("returns articles filtered by topic", () => {
+      const topic = "cats";
+      return request(app)
+        .get(`/api/articles?topic=${topic}`)
+        .expect(200)
+        .then((response) => {
+          const { articles } = response.body;
+          expect(articles).toBeInstanceOf(Array);
+          articles.forEach((article) => {
+            expect(article).toHaveProperty("topic", topic);
+          });
+        });
+    });
     test('Status code 404 for bad route',()=>{
         return request(app)
         .get('/api/article')

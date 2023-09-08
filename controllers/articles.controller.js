@@ -1,4 +1,5 @@
-const {fetchArticleById, fetchArticles, updateArticleVotes} = require("../models/articles.model")
+const articles = require("../db/data/test-data/articles");
+const {fetchArticleById, fetchArticles, updateArticleVotes, getArticlesByTopic} = require("../models/articles.model")
 
 exports.getArticleById = (req, res, next)=>{
     const {article_id} = req.params;
@@ -13,11 +14,24 @@ exports.getArticleById = (req, res, next)=>{
     })
 }
 exports.getArticles = (req, res, next) => {
-    fetchArticles()
-      .then((articles) => {
-        res.status(200).send({ articles })
+  const{topic} = req.query;
+  if(topic){
+    getArticlesByTopic(topic)
+    .then((articles)=>{
+      res.status(200).send({
+        articles:articles
       })
-      .catch(next)
+    })
+    .catch(next)
+  }
+  else{
+    fetchArticles()
+    .then((articles) => {
+      res.status(200).send({ articles })
+    })
+    .catch(next)
+  }
+   
 }
 exports.patchArticleVotes = (req, res, next) => {
     const { article_id } = req.params
